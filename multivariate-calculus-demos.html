@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Interactive multivariate calculus demos in numerator layout."><title>Multivariate Calculus Demos</title><link rel="stylesheet" href="styles.css"><script src="app.js" defer></script></head><body>
+<nav><a class="brand" href="index.html"><span>∇</span> FIELD NOTES</a><div><a href="#gradient">Gradients</a><a href="#chain">Chain rule</a><a href="#practice">Practice</a></div></nav><main>
+<section class="hero" id="top"><p class="eyebrow">MULTIVARIATE CALCULUS DEMOS · VISUAL REVIEW</p><h1>See what the<br><em>derivative</em> knows.</h1><p class="lede">Derivatives are local maps: they tell you how a small change here becomes a change there. Explore that idea from one variable to many—always in <strong>numerator layout</strong>.</p><a class="start" href="#gradient">Start exploring <span>↓</span></a></section>
+<section class="chapter" id="gradient"><header><span>01</span><div><p>LOCAL CHANGE</p><h2>Gradients</h2></div></header>
+<div class="concept"><div><h3>One dimension: the derivative is a slope</h3><p>For a scalar function <code>y = f(x)</code>, the derivative measures output change per unit input change. In numerator layout, outputs index rows and inputs index columns—even though this is a 1 × 1 matrix.</p><div class="formula">D<sub>x</sub>y = <span class="frac"><i>∂y</i><i>∂x</i></span> = f′(x)</div><p class="hint">Drag across the curve. The point, value, and tangent move together.</p></div><div class="lab"><div class="labtop"><span>f(x) = 0.45x² − 1.2</span><b id="one-top"></b></div><canvas id="one" class="plot" aria-label="Interactive parabola"></canvas><div class="readout"><span>SLOPE</span><strong id="slope"></strong><small id="trend"></small></div><details><summary>View in PyTorch <span>+</span></summary><pre><code>import torch
+
+x = torch.tensor(1.4, requires_grad=True)
+y = 0.45 * x**2 - 1.2
+y.backward()
+
+print(y.item())       # f(x)
+print(x.grad.item())  # df/dx = 0.9x</code></pre></details></div></div>
+<div class="concept reverse"><div><h3>Many inputs: the gradient is a direction</h3><p>For scalar <code>f(x₁,x₂)</code>, stack partial derivatives across one row. The gradient points toward steepest increase; its length tells you how steep that direction is.</p><div class="formula">∇f = D<sub>𝐱</sub>f = [ <span class="frac"><i>∂f</i><i>∂x₁</i></span> &nbsp; <span class="frac"><i>∂f</i><i>∂x₂</i></span> ]</div><p>The directional derivative projects the gradient onto a unit direction: <code>D<sub>𝐝</sub>f = ∇f 𝐝</code>.</p></div><div class="lab"><div class="labtop"><span>f(x₁,x₂) = x₁² + 1.7x₂²</span><b>drag point</b></div><canvas id="gradient-plot" class="plot" aria-label="Interactive contour and gradient field"></canvas><div class="vector"><span>∇f =</span><strong id="grad-value"></strong></div><details><summary>View in PyTorch <span>+</span></summary><pre><code>import torch
+
+x = torch.tensor([1.3, -0.8], requires_grad=True)
+f = x[0]**2 + 1.7 * x[1]**2
+f.backward()
+
+print(f.item())  # scalar output
+print(x.grad)    # [∂f/∂x₁, ∂f/∂x₂]</code></pre></details></div></div></section>
+<section class="chapter dark" id="chain"><header><span>02</span><div><p>COMPOSED CHANGE</p><h2>Chain rules & Jacobians</h2></div></header>
+<div class="concept"><div><h3>Single path: multiply local rates</h3><p>Let <code>x = g(t)</code> and <code>y = f(x)</code>. A small change in <code>t</code> passes through both links. Numerator layout makes the cancellation pattern visible.</p><div class="formula light"><span class="frac"><i>dy</i><i>dt</i></span> = <span class="frac"><i>∂y</i><i>∂x</i></span> <span class="frac"><i>dx</i><i>dt</i></span></div><p class="hint">Here x = t² + 1 and y = sin(2x). Drag the point; every value travels with it.</p></div><div class="chainlab"><label class="slider"><span>input t</span><input id="t-slider" type="range" min="-1.5" max="1.5" step=".01" value=".7"><b id="t-value"></b></label><canvas id="chain-plot" class="plot curveplot" aria-label="Interactive composite curve"></canvas><div class="result"><span>dy / dt</span><strong id="chain-value"></strong><small id="rates"></small></div><details><summary>View in PyTorch <span>+</span></summary><pre><code>import torch
+
+t = torch.tensor(0.7, requires_grad=True)
+x = t**2 + 1
+y = torch.sin(2 * x)
+y.backward()
+
+print(t.grad.item())  # dy/dt
+# autograd multiplies dy/dx by dx/dt</code></pre></details></div></div>
+<div class="concept reverse"><div><h3>Two inputs, two outputs: the Jacobian</h3><p>Now <code>𝐱 = [x₁ x₂]ᵀ</code> maps to two different outputs, <code>𝐲 = [y₁ y₂]ᵀ</code>. In numerator layout, each output gets a row and each input gets a column.</p><div class="formula light">D<sub>𝐱</sub>𝐲 = [ ∂yᵢ / ∂xⱼ ] <span class="dim">2×2</span></div><p>Move <code>x₁</code>. The same horizontal input change travels through both functions, but the two output points move at different speeds and can even move in opposite directions.</p></div><div class="matrixlab"><p class="matrix-title">y₁ = x₁² − x₂ &nbsp; · &nbsp; y₂ = sin(1.4x₁) + 0.6x₂²</p><label class="slider"><span>x₁</span><input id="x1-slider" type="range" min="-2" max="2" step=".01" value=".8"><b id="x1-value"></b></label><label class="slider"><span>x₂</span><input id="x2-slider" type="range" min="-2" max="2" step=".01" value="-.5"><b id="x2-value"></b></label><canvas id="multi-plot" class="plot quadrantplot" aria-label="Two coordinated output plots"></canvas><div class="jacobian-wrap"><span>D<sub>𝐱</sub>𝐲 =</span><div class="matrix" id="jacobian"></div></div><details><summary>View in PyTorch <span>+</span></summary><pre><code>import torch
+
+def outputs(x):
+    x1, x2 = x
+    y1 = x1**2 - x2
+    y2 = torch.sin(1.4*x1) + 0.6*x2**2
+    return torch.stack([y1, y2])
+
+x = torch.tensor([0.8, -0.5])
+J = torch.func.jacrev(outputs)(x)
+print(J)  # rows: outputs, columns: inputs</code></pre></details></div></div></section>
+<section class="practice" id="practice"><p class="eyebrow">CHECK YOUR INTUITION</p><h2>Three things to remember.</h2><div class="takeaways"><article><span>01</span><h3>Shape first</h3><p>A map with two outputs and two inputs has a 2 × 2 Jacobian.</p></article><article><span>02</span><h3>Rows are outputs</h3><p>Numerator layout puts one output per row and one input per column: <code>(D<sub>𝐱</sub>𝐲)<sub>ij</sub> = ∂yᵢ/∂xⱼ</code>.</p></article><article><span>03</span><h3>Read a column</h3><p>One Jacobian column shows how changing a single input affects every output.</p></article></div><div class="footerline"><span>CALCULUS FIELD NOTES</span><span>DRAG · OBSERVE · CONNECT</span></div></section>
+</main></body></html>
