@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Interactive multivariate calculus demos in numerator layout."><title>Multivariate Calculus Demos</title><link rel="stylesheet" href="styles.css"><script src="app.js" defer></script></head><body>
-<nav><a class="brand" href="index.html"><span>∇</span> FIELD NOTES</a><div><a href="#gradient">Gradients</a><a href="#chain">Chain rule</a><a href="#practice">Practice</a></div></nav><main>
+<nav><a class="brand" href="index.html"><span>∇</span> FIELD NOTES</a><div><a href="#gradient">Gradients</a><a href="#chain">Chain rule</a><a href="#mlp">MLP</a><a href="#practice">Practice</a></div></nav><main>
 <section class="hero" id="top"><p class="eyebrow">MULTIVARIATE CALCULUS DEMOS · VISUAL REVIEW</p><h1>See what the<br><em>derivative</em> knows.</h1><p class="lede">Derivatives are local maps: they tell you how a small change here becomes a change there. Explore that idea from one variable to many—always in <strong>numerator layout</strong>.</p><a class="start" href="#gradient">Start exploring <span>↓</span></a></section>
 <section class="chapter" id="gradient"><header><span>01</span><div><p>LOCAL CHANGE</p><h2>Gradients</h2></div></header>
 <div class="concept"><div><h3>One dimension: the derivative is a slope</h3><p>For a scalar function <code>y = f(x)</code>, the derivative measures output change per unit input change. In numerator layout, outputs index rows and inputs index columns—even though this is a 1 × 1 matrix.</p><div class="formula">D<sub>x</sub>y = <span class="frac"><i>∂y</i><i>∂x</i></span> = f′(x)</div><p class="hint">Drag across the curve. The point, value, and tangent move together.</p></div><div class="lab"><div class="labtop"><span>f(x) = 0.45x² − 1.2</span><b id="one-top"></b></div><canvas id="one" class="plot" aria-label="Interactive parabola"></canvas><div class="readout"><span>SLOPE</span><strong id="slope"></strong><small id="trend"></small></div><details><summary>View in PyTorch <span>+</span></summary><pre><code>import torch
@@ -39,5 +39,24 @@ def outputs(x):
 x = torch.tensor([0.8, -0.5])
 J = torch.func.jacrev(outputs)(x)
 print(J)  # rows: outputs, columns: inputs</code></pre></details></div></div></section>
+<section class="chapter mlp-chapter" id="mlp"><header><span>03</span><div><p>BACKPROPAGATION</p><h2>Two-layer sigmoid MLP</h2></div></header>
+<div class="mlp-intro"><div><h3>Click two layers to trace a gradient</h3><p>This network has two affine transformations and a sigmoid after each. Layer 1 is the input, Layer 2 is the hidden representation, and Layer 3 is the output. Select any two cards to reveal the exact Jacobian product connecting them.</p><div class="formula">𝐱 <span class="dim">2</span> → 𝐡 <span class="dim">3</span> → 𝐲 <span class="dim">2</span></div></div><div class="mlp-controls"><label class="slider"><span>x₁</span><input id="mx1-slider" type="range" min="-2" max="2" step=".01" value=".7"><b id="mx1-value"></b></label><label class="slider"><span>x₂</span><input id="mx2-slider" type="range" min="-2" max="2" step=".01" value="-.4"><b id="mx2-value"></b></label></div></div>
+<div class="mlp-lab"><div class="network-flow" aria-label="Three selectable network layers"><button class="layer-card selected" data-layer="1"><small>LAYER 1 · INPUT</small><strong>𝐱 ∈ ℝ²</strong><code id="mlp-x"></code><span>select</span></button><div class="network-arrow"><b>W₁</b><small>3×2</small></div><button class="layer-card" data-layer="2"><small>LAYER 2 · HIDDEN</small><strong>𝐡 = σ(𝐳₁)</strong><code id="mlp-h"></code><span>select</span></button><div class="network-arrow"><b>W₂</b><small>2×3</small></div><button class="layer-card selected" data-layer="3"><small>LAYER 3 · OUTPUT</small><strong>𝐲 = σ(𝐳₂)</strong><code id="mlp-y"></code><span>select</span></button></div>
+<div class="sigmoid-grads"><article><small>HIDDEN SIGMOID GRADIENT</small><h3>σ′(𝐳₁) = 𝐡 ⊙ (1−𝐡)</h3><code id="sigmoid-1"></code><p>diag(σ′(𝐳₁)) <b>3 × 3</b></p></article><article><small>OUTPUT SIGMOID GRADIENT</small><h3>σ′(𝐳₂) = 𝐲 ⊙ (1−𝐲)</h3><code id="sigmoid-2"></code><p>diag(σ′(𝐳₂)) <b>2 × 2</b></p></article></div>
+<div class="gradient-chain"><div class="chain-heading"><div><small>SELECTED PATH</small><h3 id="chain-title">Layer 1 → Layer 3</h3></div><span id="chain-shape">2 × 2</span></div><div class="chain-factors" id="mlp-chain"></div><div class="chain-result"><span>NUMERIC JACOBIAN</span><pre id="mlp-result"></pre></div></div>
+<details><summary>View in PyTorch <span>+</span></summary><pre><code>import torch
+
+W1 = torch.tensor([[.8,-.4],[-.3,.9],[.5,.6]])
+b1 = torch.tensor([.1,-.2,.05])
+W2 = torch.tensor([[.7,-.5,.4],[-.6,.8,.3]])
+b2 = torch.tensor([.05,-.1])
+
+def mlp(x):
+    h = torch.sigmoid(W1 @ x + b1)
+    return torch.sigmoid(W2 @ h + b2)
+
+x = torch.tensor([.7,-.4])
+J = torch.func.jacrev(mlp)(x)
+print(J)  # ∂y/∂x, shape [2, 2]</code></pre></details></div></section>
 <section class="practice" id="practice"><p class="eyebrow">CHECK YOUR INTUITION</p><h2>Three things to remember.</h2><div class="takeaways"><article><span>01</span><h3>Shape first</h3><p>A map with two outputs and two inputs has a 2 × 2 Jacobian.</p></article><article><span>02</span><h3>Rows are outputs</h3><p>Numerator layout puts one output per row and one input per column: <code>(D<sub>𝐱</sub>𝐲)<sub>ij</sub> = ∂yᵢ/∂xⱼ</code>.</p></article><article><span>03</span><h3>Read a column</h3><p>One Jacobian column shows how changing a single input affects every output.</p></article></div><div class="footerline"><span>CALCULUS FIELD NOTES</span><span>DRAG · OBSERVE · CONNECT</span></div></section>
 </main></body></html>
