@@ -99,3 +99,11 @@
 .material-actions span{font-size:18px}
 @media(max-width:800px){.material-entry{grid-template-columns:38px 1fr}.material-actions{grid-column:2;margin-top:5px}.material-copy strong{font-size:27px}}
 @media(max-width:520px){.material-entry{grid-template-columns:28px 1fr;gap:12px;padding:17px 6px}.material-actions{grid-template-columns:1fr}.material-actions a+a{border-left:0;border-top:1px solid var(--ink)}}
+.notes-page mjx-container[jax="CHTML"][display="true"]{margin:.35em 0!important;overflow-x:auto;overflow-y:hidden;padding:.1em 0}
+.notes-page .display-math mjx-container{font-size:100%!important}
+.notes-page .math-block .math-expression{font:20px Georgia,"Times New Roman",serif;letter-spacing:normal;text-transform:none;color:var(--ink)}
+.notes-page .result-box strong mjx-container{font-size:90%!important}
+.notes-page .dark-notes mjx-container{color:inherit}
+.notes-page .class-activity .display-math mjx-container{color:#ff9d88}
+.notes-page .jacobian-card .display-math{min-width:600px}
+@media(max-width:520px){.notes-page .display-math mjx-container{font-size:88%!important}.notes-page .jacobian-card .display-math{min-width:520px}}
