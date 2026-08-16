@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Readable lecture notes on multivariate calculus, the chain rule, and Jacobians.">
+  <title>Multivariate Calculus &amp; Chain Rule — Field Notes</title><link rel="stylesheet" href="styles.css">
+</head>
+<body class="notes-page">
+<nav><a class="brand" href="index.html"><span>∇</span> FIELD NOTES</a><div><a href="#gradients">Gradients</a><a href="#linear-maps">Linear maps</a><a href="#chain-rule">Chain rule</a><a href="#jacobians">Jacobians</a><a class="nav-demo" href="multivariate-calculus-demos.html">Try the demo ↗</a></div></nav>
+<main>
+  <header class="notes-hero">
+    <div><p class="eyebrow">MATHEMATICAL FOUNDATIONS · LECTURE NOTES 01</p><h1>Multivariate<br><em>calculus.</em></h1><p class="lede">A derivative records how change travels. Begin with one input, extend the idea across many directions, then compose those local maps with the chain rule.</p></div>
+    <aside class="reading-map"><small>READING MAP</small><ol><li>From scalars to vectors</li><li>Gradients and notation</li><li>Linear maps</li><li>The multivariate chain rule</li><li>Jacobians and geometry</li></ol><p>Convention: derivatives use <strong>numerator layout</strong>.</p></aside>
+  </header>
+
+  <section class="notes-section" id="foundations">
+    <header class="section-heading"><span>01</span><div><p>ONE INPUT</p><h2>Start with the familiar</h2></div></header>
+    <div class="notes-flow">
+      <article class="note-prose"><h3>Scalars and vectors</h3><p>A scalar is a single number, such as <i>x</i>. A vector gathers several numbers into an ordered column.</p><div class="math-block">x ∈ ℝ <span>scalar</span></div><div class="math-block">𝐱 = [x₁, x₂, …, xₘ]ᵀ ∈ ℝᵐ <span>vector</span></div></article>
+      <article class="note-card accent-card"><small>UNIVARIATE DIFFERENTIATION</small><p>If <i>y = f(x)</i>, its derivative is the limiting slope</p><div class="display-math"><span class="frac"><i>dy</i><i>dx</i></span> = lim<sub>h→0</sub> <span class="frac"><i>f(x+h) − f(x)</i><i>h</i></span>.</div><p>For <i>f(x) = 6x² − 3x + 2</i>, the analytical result is <i>f′(x) = 12x − 3</i>. A numerical estimate replaces the limit with a small value such as <i>h = 10⁻⁴</i>.</p></article>
+    </div>
+    <div class="rule-strip"><article><small>SUM</small><p>(f + g)′ = f′ + g′</p></article><article><small>PRODUCT</small><p>(fg)′ = f′g + fg′</p></article><article><small>QUOTIENT</small><p>(f/g)′ = (f′g − fg′)/g²</p></article><article><small>CHAIN</small><p>(g ∘ f)′(x) = g′(f(x)) f′(x)</p></article></div>
+  </section>
+
+  <section class="notes-section muted-section" id="gradients">
+    <header class="section-heading"><span>02</span><div><p>MANY INPUTS</p><h2>Capture every direction</h2></div></header>
+    <div class="notes-flow">
+      <article class="note-prose"><h3>Partial derivatives</h3><p>Let <i>f: ℝᵐ → ℝ</i>. To isolate the effect of one coordinate, change only <i>xᵢ</i> and hold all others fixed.</p><div class="display-math"><span class="frac"><i>∂f</i><i>∂xᵢ</i></span> = lim<sub>h→0</sub> <span class="frac"><i>f(x₁,…,xᵢ+h,…,xₘ) − f(𝐱)</i><i>h</i></span></div><p>The gradient collects all these directional sensitivities into one derivative object.</p></article>
+      <article class="notation-card"><small>NOTATION MATTERS</small><div class="notation-choice preferred"><span>NUMERATOR LAYOUT · USED HERE</span><div class="display-math">∇<sub>𝐱</sub>f = [ ∂f/∂x₁ &nbsp; ∂f/∂x₂ &nbsp; … &nbsp; ∂f/∂xₘ ]</div><b>1 × m row vector</b></div><div class="notation-choice"><span>DENOMINATOR LAYOUT</span><div class="display-math">[ ∂f/∂x₁ &nbsp; ∂f/∂x₂ &nbsp; … &nbsp; ∂f/∂xₘ ]ᵀ</div><b>m × 1 column vector</b></div><p>The order matters because derivatives are vectors and matrices. Pick a convention and keep every multiplication shape-consistent.</p></article>
+    </div>
+  </section>
+
+  <section class="notes-section" id="linear-maps">
+    <header class="section-heading"><span>03</span><div><p>USEFUL IDENTITIES</p><h2>Linear maps make the pattern visible</h2></div></header>
+    <div class="identity-grid"><article><small>SCALAR</small><div class="display-math"><span class="frac"><i>∂x</i><i>∂x</i></span> = 1</div></article><article><small>LINEAR FUNCTION</small><div class="display-math"><span class="frac"><i>∂(mx+c)</i><i>∂x</i></span> = m</div></article><article><small>QUADRATIC</small><div class="display-math"><span class="frac"><i>∂x²</i><i>∂x</i></span> = 2x</div></article><article><small>COORDINATE PROJECTION</small><div class="display-math"><span class="frac"><i>∂x₁</i><i>∂𝐱</i></span> = [1 0 … 0]</div></article></div>
+    <div class="worked-example"><div><small>WORKED EXAMPLE</small><h3>Differentiate a matrix-vector product</h3><p>For <i>f(𝐱) = A𝐱</i>, each output is a weighted sum: <i>fᵢ(𝐱) = Σⱼ aᵢⱼxⱼ</i>. Differentiating output <i>i</i> with respect to input <i>j</i> returns exactly <i>aᵢⱼ</i>.</p></div><div class="result-box"><span>Therefore</span><strong>∂(A𝐱) / ∂𝐱 = A</strong><p>If <i>f(𝐱) = 𝐱ᵀA𝐱</i>, then ∇<sub>𝐱</sub>f = (A + Aᵀ)𝐱. For symmetric A, this becomes 2A𝐱.</p></div></div>
+  </section>
+
+  <section class="notes-section dark-notes" id="chain-rule">
+    <header class="section-heading"><span>04</span><div><p>COMPOSED CHANGE</p><h2>The multivariate chain rule</h2></div></header>
+    <div class="chain-story"><article><small>ONE PARAMETER, MANY INTERMEDIATES</small><h3>Let f = f(x₁, x₂), where x₁ and x₂ depend on t.</h3><div class="display-math"><span class="frac"><i>df</i><i>dt</i></span> = <span class="frac"><i>∂f</i><i>∂𝐱</i></span><span class="frac"><i>∂𝐱</i><i>∂t</i></span> = [ ∂f/∂x₁ &nbsp; ∂f/∂x₂ ] [ ∂x₁/∂t &nbsp; ∂x₂/∂t ]ᵀ</div><div class="display-math secondary">= <span class="frac"><i>∂f</i><i>∂x₁</i></span><span class="frac"><i>∂x₁</i><i>∂t</i></span> + <span class="frac"><i>∂f</i><i>∂x₂</i></span><span class="frac"><i>∂x₂</i><i>∂t</i></span></div></article><aside><p>Each route from <i>t</i> to <i>f</i> contributes one product of local rates. Add the routes.</p><div class="shape-check"><span>1 × 2</span><b>×</b><span>2 × 1</span><b>=</b><span>1 × 1</span></div></aside></div>
+    <div class="class-activity"><small>CLASS ACTIVITY</small><p>Let <i>f(x₁,x₂) = x₁² + 2x₂</i>, with <i>x₁ = sin t</i> and <i>x₂ = cos t</i>. Then</p><div class="display-math"><span class="frac"><i>df</i><i>dt</i></span> = 2x₁ cos t − 2 sin t = 2 sin t (cos t − 1).</div></div>
+    <div class="multi-chain"><div><small>MULTIPLE PARAMETERS</small><p>If 𝐱 depends on 𝐬 = [s,t]ᵀ, the same rule becomes matrix multiplication.</p></div><div class="display-math"><span class="frac"><i>∂f</i><i>∂𝐬</i></span> = <span class="frac"><i>∂f</i><i>∂𝐱</i></span><span class="frac"><i>∂𝐱</i><i>∂𝐬</i></span></div></div>
+  </section>
+
+  <section class="notes-section" id="jacobians">
+    <header class="section-heading"><span>05</span><div><p>MANY INPUTS, MANY OUTPUTS</p><h2>The Jacobian</h2></div></header>
+    <div class="notes-flow"><article class="note-prose"><h3>Differentiate several functions at once</h3><p>Let 𝐟(𝐱) = [f₁(𝐱), f₂(𝐱), …, fₙ(𝐱)]ᵀ ∈ ℝⁿ. In numerator layout, each row tracks one output and each column tracks one input.</p><div class="display-math">J = ∇<sub>𝐱</sub>𝐟 = <span class="frac"><i>∂𝐟</i><i>∂𝐱</i></span>, &nbsp; J<sub>ij</sub> = <span class="frac"><i>∂fᵢ</i><i>∂xⱼ</i></span></div></article><article class="jacobian-card"><div class="j-head"><span>INPUTS →</span><span>x₁</span><span>x₂</span><span>…</span><span>xₘ</span></div><div class="j-row"><b>f₁</b><span>∂f₁/∂x₁</span><span>∂f₁/∂x₂</span><span>…</span><span>∂f₁/∂xₘ</span></div><div class="j-row"><b>f₂</b><span>∂f₂/∂x₁</span><span>∂f₂/∂x₂</span><span>…</span><span>∂f₂/∂xₘ</span></div><div class="j-row ellipsis"><b>⋮</b><span>⋮</span><span>⋮</span><span>⋱</span><span>⋮</span></div><div class="j-row"><b>fₙ</b><span>∂fₙ/∂x₁</span><span>∂fₙ/∂x₂</span><span>…</span><span>∂fₙ/∂xₘ</span></div><small>↑ OUTPUTS · n × m</small></article></div>
+    <div class="meaning-panel"><div><small>PHYSICAL SIGNIFICANCE</small><h3>A local change of coordinates</h3><p>Near a point 𝐱, a small input displacement Δ𝐱 is carried to an output displacement by the Jacobian:</p><div class="display-math">Δ𝐟 ≈ J(𝐱) Δ𝐱.</div></div><div class="basis-demo"><div><span>INPUT BASIS</span><b>e₂ ↑</b><b>e₁ →</b></div><i>J(𝐱)</i><div><span>MAPPED DIRECTIONS</span><b>J e₂ ↖</b><b>J e₁ ↗</b></div></div></div>
+    <div class="closing-note"><strong>Keep the shapes visible.</strong><p>Gradients and Jacobians are not just tables of partial derivatives. They are the best local linear description of how a function transforms change—and their products are the machinery behind backpropagation.</p><a href="multivariate-calculus-demos.html">Explore the interactive demos <span>↗</span></a></div>
+  </section>
+</main>
+<footer class="notes-footer"><a href="index.html">← All field notes</a><span>Reference: <i>Mathematics for Machine Learning</i> · Deisenroth, Faisal &amp; Ong</span></footer>
+</body></html>
